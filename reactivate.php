@@ -33,6 +33,7 @@ if (isset($_GET['user_id']) && isnum($_GET['user_id']) && isset($_GET['code']) &
 				$result = dbquery("UPDATE ".DB_USERS." SET user_status='0', user_actiontime='0', user_lastvisit='".time()."' WHERE user_id='".$_GET['user_id']."'");
 				unsuspend_log($_GET['user_id'], 7, $locale['506'], true);
 				$message = str_replace("[USER_NAME]", $data['user_name'], $locale['505']);
+				require_once INCLUDES."sendmail_include.php";
 				sendemail($data['user_name'], $data['user_email'], $settings['siteusername'], $settings['siteemail'], $locale['504'], $message);
 				redirect(BASEDIR."login.php");
 			} else {

@@ -134,6 +134,8 @@ $locale['680'] = "Flood Auto Ban:";
 $locale['681'] = "Maintenance";
 $locale['682'] = "Flood Settings";
 $locale['683'] = "Security Settings";
+
+$locale['687'] = "Bad Words";
 // Private Message Settings
 $locale['700'] = "Private Messages";
 $locale['701'] = "Inbox message limit:";
@@ -182,7 +184,7 @@ $locale['956'] = "Square";
 $locale['957'] = "Image on Front-page";
 $locale['958'] = "Image on Read-more";
 $locale['959'] = "Uploaded Photo";
-$locale['960'] = "Forum Cat Image";
+$locale['960'] = "Category Image";
 // User Management
 $locale['1001'] = "Avatar ratio:";
 $locale['1002'] = "De-activation system enabled";

@@ -2,6 +2,7 @@
 $locale['title'] = "PHP-Fusion Core 7 Edition Setup";
 $locale['sub-title'] = "PHP-Fusion Core 7 Edition Setup";
 
+$locale['xml_lang'] = "en";
 $locale['charset'] = "iso-8859-1";
 $locale['001'] = "Step 1: Locale";
 $locale['002'] = "Step 2: File and Folder Permissions Test";
@@ -41,7 +42,7 @@ $locale['047'] = "Please ensure config.php is writable.";
 $locale['048'] = "Unable to create database tables.";
 $locale['049'] = "Please specify your database name.";
 $locale['050'] = "Unable to connect with MySQL database.";
-$locale['051'] = "The spesified MySQL database does not exist.";
+$locale['051'] = "The specified MySQL database does not exist.";
 $locale['052'] = "Table prefix error.";
 $locale['053'] = "The specified table prefix is already in use.";
 $locale['054'] = "Could not write or delete MySQL tables.";

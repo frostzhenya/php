@@ -58,7 +58,7 @@ if (isset($_POST['save'])) {
 		require_once INCLUDES."photo_functions_include.php";
 
 		$image = $_FILES['news_image'];
-		$image_name = str_replace(" ", "_", strtolower(substr($image['name'], 0, strrpos($image['name'], "."))));
+		$image_name = stripfilename(str_replace(" ", "_", strtolower(substr($image['name'], 0, strrpos($image['name'], ".")))));
 		$image_ext = strtolower(strrchr($image['name'],"."));
 
 		if ($image_ext == ".gif") { $filetype = 1;
@@ -332,7 +332,7 @@ if (isset($_POST['save'])) {
 	echo "</select> <select name='news_start[mon]' class='textbox'>\n<option>--</option>\n";
 	for ($i=1;$i<=12;$i++) echo "<option".(isset($news_start['mon']) && $news_start['mon'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> <select name='news_start[year]' class='textbox'>\n<option>----</option>\n";
-	for ($i=date('Y', time());$i<=date("Y", strtotime('+10 years'));$i++) echo "<option".(isset($news_start['year']) && $news_start['year'] == $i ? " selected='selected'" : "").">$i</option>\n";
+	for ($i=(isset($news_start['year']) && $news_start['year'] != "----" ? $news_start['year'] : date('Y'));$i<=date("Y", strtotime('+10 years'));$i++) echo "<option".(isset($news_start['year']) && $news_start['year'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> / <select name='news_start[hours]' class='textbox'>\n";
 	for ($i=0;$i<=24;$i++) echo "<option".(isset($news_start['hours']) && $news_start['hours'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> : <select name='news_start[minutes]' class='textbox'>\n";
@@ -345,7 +345,7 @@ if (isset($_POST['save'])) {
 	echo "</select> <select name='news_end[mon]' class='textbox'>\n<option>--</option>\n";
 	for ($i=1;$i<=12;$i++) echo "<option".(isset($news_end['mon']) && $news_end['mon'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> <select name='news_end[year]' class='textbox'>\n<option>----</option>\n";
-	for ($i=date('Y', time());$i<=date("Y", strtotime('+10 years'));$i++) echo "<option".(isset($news_end['year']) && $news_end['year'] == $i ? " selected='selected'" : "").">$i</option>\n";
+	for ($i=(isset($news_end['year']) && $news_end['year'] != "----" ? $news_end['year'] : date('Y'));$i<=date("Y", strtotime('+10 years'));$i++) echo "<option".(isset($news_end['year']) && $news_end['year'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> / <select name='news_end[hours]' class='textbox'>\n";
 	for ($i=0;$i<=24;$i++) echo "<option".(isset($news_end['hours']) && $news_end['hours'] == $i ? " selected='selected'" : "").">$i</option>\n";
 	echo "</select> : <select name='news_end[minutes]' class='textbox'>\n";

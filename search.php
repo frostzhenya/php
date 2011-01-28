@@ -34,25 +34,25 @@ if (isset($_GET['stext'])) {
 }
 
 if (isset($_GET['method'])) { $_GET['method'] = ($_GET['method']=="OR" || $_GET['method']=="AND") ? $_GET['method'] : "OR"; }
-if (!isset($_GET['method'])) { $_GET['method'] = "OR"; }
+else { $_GET['method'] = "OR"; }
 
 if (isset($_GET['datelimit'])) { $_GET['datelimit'] = isnum($_GET['datelimit']) ? $_GET['datelimit'] : 0; }
-if (!isset($_GET['datelimit'])) { $_GET['datelimit'] = 0; }
+else { $_GET['datelimit'] = 0; }
 
 if (isset($_GET['fields'])) { $_GET['fields'] = isnum($_GET['fields']) ? $_GET['fields'] : 2; }
-if (!isset($_GET['fields'])) { $_GET['fields'] = 2; }
+else { $_GET['fields'] = 2; }
 
 if (isset($_GET['sort'])) { $_GET['sort'] = in_array($_GET['sort'], array("datestamp", "subject", "author")) ? $_GET['sort'] : "datestamp"; }
-if (!isset($_GET['sort'])) { $_GET['sort'] = "datestamp"; }
+else { $_GET['sort'] = "datestamp"; }
 
 if (isset($_GET['order'])) { $_GET['order'] = isnum($_GET['order']) ? $_GET['order'] : 0; }
-if (!isset($_GET['order'])) { $_GET['order'] = 0; }
+else { $_GET['order'] = 0; }
 
 if (isset($_GET['chars'])) { $_GET['chars'] = isnum($_GET['chars']) ? ($_GET['chars'] > 200 ? 200 : $_GET['chars']) : 50; }
-if (!isset($_GET['chars'])) { $_GET['chars'] = 50; }
+else { $_GET['chars'] = 50; }
 
 if (isset($_GET['forum_id'])) { $_GET['forum_id'] = isnum($_GET['forum_id']) ? $_GET['forum_id'] : 0; }
-if (!isset($_GET['forum_id'])) { $_GET['forum_id'] = 0; }
+else { $_GET['forum_id'] = 0; }
 
 $radio_button = array();
 $form_elements = array();

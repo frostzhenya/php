@@ -132,7 +132,7 @@ if (isset($_GET['action']) && $_GET['action'] == "refresh") {
 	echo "</tr>\n<tr>\n";
 	echo "<td class='tbl'>".$locale['422']."</td>\n";
 	echo "<td class='tbl'><select name='link_visibility' class='textbox' style='width:150px;'>\n".$visibility_opts."</select>\n";
-	echo $locale['423']."\n<input type='text' name='link_order'  value='".$link_order."' maxlength='2' class='textbox' style='width:40px;' />";
+	echo $locale['423']."\n<input type='text' name='link_order'  value='".$link_order."' maxlength='3' class='textbox' style='width:40px;' />";
 	echo "</td>\n</tr>\n<tr>\n";
 	echo "<td valign='top' class='tbl'>".$locale['424']."</td>\n";
 	echo "<td class='tbl'><label><input type='radio' name='link_position' value='1'".$pos1_check." /> ".$locale['425']."</label><br />\n";

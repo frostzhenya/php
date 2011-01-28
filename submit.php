@@ -212,7 +212,7 @@ if ($_GET['stype'] == "l") {
 		if (is_uploaded_file($_FILES['photo_pic_file']['tmp_name'])) {
 			$photo_types = array(".gif",".jpg",".jpeg",".png");
 			$photo_pic = $_FILES['photo_pic_file'];
-			$photo_name = strtolower(substr($photo_pic['name'], 0, strrpos($photo_pic['name'], ".")));
+			$photo_name = stripfilename(strtolower(substr($photo_pic['name'], 0, strrpos($photo_pic['name'], "."))));
 			$photo_ext = strtolower(strrchr($photo_pic['name'],"."));
 			$photo_dest = PHOTOS."submissions/";
 			if (!preg_match("/^[-0-9A-Z_\[\]]+$/i", $photo_name)) {

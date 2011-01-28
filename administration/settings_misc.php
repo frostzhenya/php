@@ -44,12 +44,6 @@ if (isset($_POST['savesettings'])) {
 	if (!$result) { $error = 1; }
 	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".stripinput($_POST['smtp_password'])."' WHERE settings_name='smtp_password'");
 	if (!$result) { $error = 1; }
-	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".(isnum($_POST['bad_words_enabled']) ? $_POST['bad_words_enabled'] : "0")."' WHERE settings_name='bad_words_enabled'");
-	if (!$result) { $error = 1; }
-	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".addslash($_POST['bad_words'])."' WHERE settings_name='bad_words'");
-	if (!$result) { $error = 1; }
-	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".stripinput($_POST['bad_word_replace'])."' WHERE settings_name='bad_word_replace'");
-	if (!$result) { $error = 1; }
 	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".(isnum($_POST['guestposts']) ? $_POST['guestposts'] : "0")."' WHERE settings_name='guestposts'");
 	if (!$result) { $error = 1; }
 	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".(isnum($_POST['comments_enabled']) ? $_POST['comments_enabled'] : "0")."' WHERE settings_name='comments_enabled'");
@@ -82,18 +76,6 @@ echo "<td width='50%' class='tbl'><input type='text' name='smtp_username' value=
 echo "</tr>\n<tr>\n";
 echo "<td width='50%' class='tbl'>".$locale['667']."</td>\n";
 echo "<td width='50%' class='tbl'><input type='password' name='smtp_password' value='".$settings['smtp_password']."' maxlength='100' class='textbox' style='width:200px;' /></td>\n";
-echo "</tr>\n<tr>\n";
-echo "<td width='50%' class='tbl'>".$locale['659']."</td>\n";
-echo "<td width='50%' class='tbl'><select name='bad_words_enabled' class='textbox'>\n";
-echo "<option value='1'".($settings['bad_words_enabled'] == "1" ? " selected='selected'" : "").">".$locale['518']."</option>\n";
-echo "<option value='0'".($settings['bad_words_enabled'] == "0" ? " selected='selected'" : "").">".$locale['519']."</option>\n";
-echo "</select></td>\n";
-echo "</tr>\n<tr>\n";
-echo "<td valign='top' width='50%' class='tbl'>".$locale['651']."<br /><span class='small2'>".$locale['652']."<br />".$locale['653']."</span></td>\n";
-echo "<td width='50%' class='tbl'><textarea name='bad_words' cols='50' rows='5' class='textbox' style='width:200px;'>".$settings['bad_words']."</textarea></td>\n";
-echo "</tr>\n<tr>\n";
-echo "<td width='50%' class='tbl'>".$locale['654']."</td>\n";
-echo "<td width='50%' class='tbl'><input type='text' name='bad_word_replace' value='".$settings['bad_word_replace']."' maxlength='128' class='textbox' style='width:200px;' /></td>\n";
 echo "</tr>\n<tr>\n";
 echo "<td width='50%' class='tbl'>".$locale['655']."</td>\n";
 echo "<td width='50%' class='tbl'><select name='guestposts' class='textbox'>\n";

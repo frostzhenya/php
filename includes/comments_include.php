@@ -40,7 +40,7 @@ function showcomments($ctype, $cdb, $ccol, $cid, $clink) {
 				$comment_name = $userdata['user_id'];
 			} elseif ($settings['guestposts'] == "1") {
 				$comment_name = trim(stripinput($_POST['comment_name']));
-				$comment_name = preg_replace("(^[0-9]*)", "", $comment_name);
+				$comment_name = preg_replace("(^[0-9\s]*)", "", $comment_name);
 				if (isnum($comment_name)) { $comment_name = ""; }
 				include_once INCLUDES."securimage/securimage.php";
 				$securimage = new Securimage();

@@ -20,7 +20,7 @@ if (!defined("IN_FUSION")) { die("Access Denied"); }
 if (isset($_POST['previewreply'])) {
 	$message = trim(stripinput(censorwords($_POST['message'])));
 	$sig_checked = isset($_POST['show_sig']) ? " checked='checked'" : "";
-	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#\[code\](.*?)\[/code\]#si", $message) ? " checked='checked'" : "";
+	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? " checked='checked'" : "";
 	if ($settings['thread_notify']) $notify_checked = isset($_POST['notify_me']) ? " checked='checked'" : "";
 	if ($message == "") {
 		$previewmessage = $locale['421'];
@@ -54,7 +54,7 @@ if (isset($_POST['postreply'])) {
 	$message = trim(stripinput(censorwords($_POST['message'])));
 	$flood = false; $error = 0;
 	$sig = isset($_POST['show_sig']) ? "1" : "0";
-	$smileys = isset($_POST['disable_smileys']) || preg_match("#\[code\](.*?)\[/code\]#si", $message) ? "0" : "1";
+	$smileys = isset($_POST['disable_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? "0" : "1";
 	if (iMEMBER) {
 		if ($message != "") {
 			require_once INCLUDES."flood_include.php";
@@ -73,12 +73,12 @@ if (isset($_POST['postreply'])) {
 				if (isset($_FILES['attach']) && $fdata['forum_attach'] && checkgroup($fdata['forum_attach'])) {
 					$attach = $_FILES['attach'];
 					if ($attach['name'] != "" && !empty($attach['name']) && is_uploaded_file($attach['tmp_name'])) {
-						$attachname = substr($attach['name'], 0, strrpos($attach['name'], "."));
+						$attachname = stripfilename(substr($attach['name'], 0, strrpos($attach['name'], ".")));
 						$attachext = strtolower(strrchr($attach['name'],"."));
 						if (preg_match("/^[-0-9A-Z_\[\]]+$/i", $attachname) && $attach['size'] <= $settings['attachmax']) {
 							$attachtypes = explode(",", $settings['attachtypes']);
 							if (in_array($attachext, $attachtypes)) {
-								$attachname = attach_exists(strtolower($attach['name']));
+								$attachname .= $attachext;
 								move_uploaded_file($attach['tmp_name'], FORUM."attachments/".$attachname);
 								chmod(FORUM."attachments/".$attachname,0644);
 								if (in_array($attachext, $imagetypes) && (!@getimagesize(FORUM."attachments/".$attachname) || !@verify_image(FORUM."attachments/".$attachname))) {

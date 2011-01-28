@@ -30,11 +30,11 @@ if (iMEMBER && (isset($_GET['s_action']) && $_GET['s_action'] == "delete") && (i
 
 function sbwrap($text) {
 	global $locale;
-	
+
 	$i = 0; $tags = 0; $chars = 0; $res = "";
-	
+
 	$str_len = strlen($text);
-	
+
 	for ($i = 0; $i < $str_len; $i++) {
 		$chr = mb_substr($text, $i, 1, $locale['charset']);
 		if ($chr == "<") {
@@ -58,14 +58,14 @@ function sbwrap($text) {
 		} elseif (!$tags) {
 			$chars++;
 		}
-		
+
 		if (!$tags && $chars == 18) {
 			$chr .= "<br />";
 			$chars = 0;
 		}
 		$res .= $chr;
 	}
-	
+
 	return $res;
 }
 
@@ -78,7 +78,7 @@ if (iMEMBER || $settings['guestposts'] == "1") {
 			$shout_name = $userdata['user_id'];
 		} elseif ($settings['guestposts'] == "1") {
 			$shout_name = trim(stripinput($_POST['shout_name']));
-			$shout_name = preg_replace("(^[0-9]*)", "", $shout_name);
+			$shout_name = preg_replace("(^[0-9\s]*)", "", $shout_name);
 			if (isnum($shout_name)) { $shout_name = ""; }
 			include_once INCLUDES."securimage/securimage.php";
 			$securimage = new Securimage();
@@ -129,7 +129,7 @@ if (iMEMBER || $settings['guestposts'] == "1") {
 		$shout_link = $link;
 		$shout_message = "";
 	}
-	
+
 	echo "<a id='edit_shout' name='edit_shout'></a>\n";
 	echo "<form name='shout_form' method='post' action='".$shout_link."'>\n";
 	if (iGUEST) {

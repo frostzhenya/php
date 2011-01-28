@@ -233,9 +233,12 @@ if (iMOD) {
 	}
 	echo "</form>\n";
 	if ($rows) {
-		echo "<script type='text/javascript'>\n"."function setChecked(frmName,chkName,val) {\n";
+		echo "<script type='text/javascript'>\n";
+		echo "/* <![CDATA[ */";
+		echo "function setChecked(frmName,chkName,val) {\n";
 		echo "dml=document.forms[frmName];\n"."len=dml.elements.length;\n"."for(i=0;i < len;i++) {\n";
 		echo "if(dml.elements[i].name == chkName) {\n"."dml.elements[i].checked = val;\n}\n}\n}\n";
+		echo "/*//]]>\n*/";
 		echo "</script>\n";
 	}
 }

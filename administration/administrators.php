@@ -104,6 +104,7 @@ if (isset($_GET['edit']) && isnum($_GET['edit']) && $_GET['edit'] != 1) {
 		opentable($locale['440']." [".$data['user_name']."]");
 		$columns = 2; $counter = 0; $page = 1;
 		$admin_page = array($locale['441'], $locale['442'], $locale['443'], $locale['449'], $locale['444']);
+		$risky_rights = array("CP", "AD", "SB", "DB", "IP", "P", "S11", "S3");
 		echo "<form name='rightsform' method='post' action='".FUSION_SELF.$aidlink."&amp;user_id=".$_GET['edit']."'>\n";
 		echo "<table cellpadding='0' cellspacing='1' width='450' class='tbl-border center'>\n";
 		echo "<tr>\n<td colspan='2' class='tbl2'><strong>".$admin_page['0']."</strong></td>\n</tr>\n<tr>\n";
@@ -114,10 +115,12 @@ if (isset($_GET['edit']) && isnum($_GET['edit']) && $_GET['edit'] != 1) {
 				$page++; $counter = 0;
 			}
 			if ($counter != 0 && ($counter % $columns == 0)) { echo "</tr>\n<tr>\n"; }
-			echo "<td width='50%' class='tbl1'><label><input type='checkbox' name='rights[]' value='".$data2['admin_rights']."'".(in_array($data2['admin_rights'], $user_rights) ? " checked='checked'" : "")." /> ".$data2['admin_title']."</label></td>\n";
+			echo "<td width='50%' class='tbl1'><label title='".$data2['admin_rights']."'><input type='checkbox' name='rights[]' value='".$data2['admin_rights']."'".(in_array($data2['admin_rights'], $user_rights) ? " checked='checked'" : "")." /> ".$data2['admin_title']."</label>".(in_array($data2['admin_rights'], $risky_rights) ? "<span style='color:red;font-weight:bold;margin-left:3px;'>*</span>" : "")."</td>\n";
 			$counter++;
 		}
-		echo "</tr>\n<tr>\n</table>\n";
+		echo "</tr>\n";
+		echo "<tr>\n<td class='tbl' colspan='2' style='font-weight:bold;text-align:left; color:black !important; background-color:#FFDBDB;'><span style='color:red;font-weight:bold;margin-right:5px;'>*</span>".$locale['462']."</td>\n</tr>\n";
+		echo "</table>\n";
 		echo "<div style='text-align:center'><br />\n";
 		echo "<input type='button' class='button' onclick=\"setChecked('rightsform','rights[]',1);\" value='".$locale['445']."' />\n";
 		echo "<input type='button' class='button' onclick=\"setChecked('rightsform','rights[]',0);\" value='".$locale['446']."' /><br /><br />\n";
@@ -127,10 +130,14 @@ if (isset($_GET['edit']) && isnum($_GET['edit']) && $_GET['edit'] != 1) {
 		echo "<input type='submit' name='update_admin' value='".$locale['448']."' class='button' />\n";
 		echo "</div>\n</form>\n";
 		closetable();
-		echo "<script type='text/javascript'>"."\n"."function setChecked(frmName,chkName,val) {"."\n";
+		echo "<script type='text/javascript'>\n";
+		echo "/* <![CDATA[ */";
+		echo "function setChecked(frmName,chkName,val) {"."\n";
 		echo "dml=document.forms[frmName];"."\n"."len=dml.elements.length;"."\n"."for(i=0;i < len;i++) {"."\n";
 		echo "if(dml.elements[i].name == chkName) {"."\n"."dml.elements[i].checked = val;"."\n";
-		echo "}\n}\n}\n</script>\n";
+		echo "}\n}\n}\n";
+		echo "/*//]]>\n*/";
+		echo "</script>\n";
 	}
 } else {
 	opentable($locale['410']);
@@ -165,13 +172,14 @@ if (isset($_GET['edit']) && isnum($_GET['edit']) && $_GET['edit'] != 1) {
 			if ($i > 0) {
 				echo "<tr>\n<td class='tbl2'><strong>".$locale['413']."</strong></td>\n</tr>\n";
 				echo $users."<tr>\n<td align='center' class='tbl'>\n";
-				echo "<label><input type='checkbox' name='all_rights' value='1' /> ".$locale['415']."</label><br />\n";
-				if ($userdata['user_level'] == 103) { echo "<label><input type='checkbox' name='make_super' value='1' /> ".$locale['416']."</label><br />\n"; }
+				echo "<label><input type='checkbox' name='all_rights' value='1' /> ".$locale['415']."</label><span style='color:red;font-weight:bold;margin-left:5px;'>*</span><br />\n";
+				if ($userdata['user_level'] == 103) { echo "<label><input type='checkbox' name='make_super' value='1' /> ".$locale['416']."</label><span style='color:red;font-weight:bold;margin-left:5px;'>*</span><br />\n"; }
 				if (!check_admin_pass(isset($_POST['admin_password']) ? stripinput($_POST['admin_password']) : "")) {
 					echo $locale['447']." <input type='password' name='admin_password' class='textbox' style='width:150px;' /><br /><br />\n";
 				}
-				echo "<br />\n<input type='submit' name='add_admin' value='".$locale['417']."' class='button' />\n";
+				echo "<br />\n<input type='submit' name='add_admin' value='".$locale['417']."' class='button' onclick=\"return confirm('".$locale['461']."');\" />\n";
 				echo "</td>\n</tr>\n";
+				echo "<tr>\n<td class='tbl' style='font-weight:bold;text-align:left; color:black !important; background-color:#FFDBDB;'><span style='color:red;font-weight:bold;margin-right:5px;'>*</span>".$locale['462']."</td>\n</tr>\n";
 			} else {
 				echo "<tr>\n<td align='center' class='tbl'>".$locale['418']."<br /><br />\n";
 				echo "<a href='".FUSION_SELF.$aidlink."'>".$locale['419']."</a>\n</td>\n</tr>\n";

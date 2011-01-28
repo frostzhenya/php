@@ -23,7 +23,7 @@ if (isset($_POST['previewpost']) || isset($_POST['add_poll_option'])) {
 	$sticky_thread_check = isset($_POST['sticky_thread']) ? " checked='checked'" : "";
 	$lock_thread_check = isset($_POST['lock_thread']) ? " checked='checked'" : "";
 	$sig_checked = isset($_POST['show_sig']) ? " checked='checked'" : "";
-	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#\[code\](.*?)\[/code\]#si", $message) ? " checked='checked'" : "";
+	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? " checked='checked'" : "";
 	if ($settings['thread_notify']) { $notify_checked = isset($_POST['notify_me']) ? " checked='checked'" : ""; }
 
 	if ($fdata['forum_poll'] && checkgroup($fdata['forum_poll'])) {
@@ -91,7 +91,7 @@ if (isset($_POST['postnewthread'])) {
 	$sticky_thread = isset($_POST['sticky_thread']) && (iMOD || iSUPERADMIN) ? 1 : 0;
 	$lock_thread = isset($_POST['lock_thread']) && (iMOD || iSUPERADMIN) ? 1 : 0;
 	$sig = isset($_POST['show_sig']) ? 1 : 0;
-	$smileys = isset($_POST['disable_smileys']) || preg_match("#\[code\](.*?)\[/code\]#si", $message) ? 0 : 1;
+	$smileys = isset($_POST['disable_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? 0 : 1;
 	$thread_poll = 0;
 
 	if ($fdata['forum_poll'] && checkgroup($fdata['forum_poll'])) {
@@ -133,12 +133,12 @@ if (isset($_POST['postnewthread'])) {
 				if ($fdata['forum_attach'] && checkgroup($fdata['forum_attach'])) {
 					$attach = $_FILES['attach'];
 					if ($attach['name'] != "" && !empty($attach['name']) && is_uploaded_file($attach['tmp_name'])) {
-						$attachname = substr($attach['name'], 0, strrpos($attach['name'], "."));
+						$attachname = stripfilename(substr($attach['name'], 0, strrpos($attach['name'], ".")));
 						$attachext = strtolower(strrchr($attach['name'],"."));
 						if (preg_match("/^[-0-9A-Z_\[\]]+$/i", $attachname) && $attach['size'] <= $settings['attachmax']) {
 							$attachtypes = explode(",", $settings['attachtypes']);
 							if (in_array($attachext, $attachtypes)) {
-								$attachname = attach_exists(strtolower($attach['name']));
+								$attachname .= $attachext;
 								move_uploaded_file($attach['tmp_name'], FORUM."attachments/".$attachname);
 								chmod(FORUM."attachments/".$attachname,0644);
 								if (in_array($attachext, $imagetypes) && (!@getimagesize(FORUM."attachments/".$attachname) || !@verify_image(FORUM."attachments/".$attachname))) {

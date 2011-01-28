@@ -35,7 +35,7 @@ define("START_PAGE", substr(preg_replace("#(&amp;|\?)(s_action=edit&amp;shout_id
 $p_sql = false; $p_arr = array(1 => false, 2 => false, 3 => false, 4 => false);
 if (!defined("ADMIN_PANEL")) {
 	if (check_panel_status("left")) {
-		$p_sql = "panel_side='1'"; 
+		$p_sql = "panel_side='1'";
 	}
 	if (check_panel_status("upper")) {
 		$p_sql .= ($p_sql ? " OR " : "");
@@ -46,14 +46,14 @@ if (!defined("ADMIN_PANEL")) {
 		$p_sql .= ($settings['opening_page'] != START_PAGE ? "(panel_side='3' AND panel_display='1')" : "panel_side='3'");
 	}
 	if (check_panel_status("right")) {
-		$p_sql .= ($p_sql ? " OR " : "")."panel_side='4'"; 
+		$p_sql .= ($p_sql ? " OR " : "")."panel_side='4'";
 	}
 
 	$p_sql = ($p_sql ? " AND (".$p_sql.")" : false);
 
 	if ($p_sql) {
 		$p_res = dbquery(
-			"SELECT panel_side, panel_type, panel_filename, panel_content FROM ".DB_PANELS." 
+			"SELECT panel_side, panel_type, panel_filename, panel_content FROM ".DB_PANELS."
 			WHERE panel_status='1'".$p_sql." AND ".groupaccess('panel_access')."
 			ORDER BY panel_side, panel_order"
 		);
@@ -100,6 +100,7 @@ if (!defined("ADMIN_PANEL")) {
 	if (iADMIN && !$userdata['user_admin_password']) {
 		$p_arr[2] = "<div id='close-message'><div class='admin-message'>".$locale['global_199']."</div></div>\n".$p_arr[2];
 	}
+	$p_arr[2] = "<noscript><div class='noscript-message admin-message'>".$locale['global_303']."</div>\n</noscript>\n".$p_arr[2];
 }
 
 define("LEFT", $p_arr[1]);

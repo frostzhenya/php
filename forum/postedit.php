@@ -20,7 +20,7 @@ if (!defined("IN_FUSION")) { die("Access Denied"); }
 if (isset($_POST['previewchanges']) || isset($_POST['delete_poll']) || isset($_POST['update_poll_title']) || isset($_POST['update_poll_option']) || isset($_POST['delete_poll_option']) || isset($_POST['add_poll_option'])) {
 	$message = trim(stripinput(censorwords($_POST['message'])));
 	$subject = isset($_POST['subject']) ? trim(stripinput(censorwords($_POST['subject']))) : $tdata['thread_subject'];
-	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#\[code\](.*?)\[/code\]#si", $message) ? " checked='checked'" : "";
+	$disable_smileys_check = isset($_POST['disable_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? " checked='checked'" : "";
 	$del_check = isset($_POST['delete']) ? " checked='checked'" : "";
 	$del_attach_check = isset($_POST['delete_attach']) ? " checked='checked'" : "";
 	$poll_opts = array();
@@ -163,12 +163,20 @@ if (isset($_POST['savechanges'])) {
 			$subject = trim(stripinput(censorwords($_POST['subject'])));
 		}
 		$message = trim(stripinput(censorwords($_POST['message'])));
-		$smileys = isset($_POST['disable_smileys'])|| preg_match("#\[code\](.*?)\[/code\]#si", $message) ? "0" : "1";
+		$smileys = isset($_POST['disable_smileys'])|| preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? "0" : "1";
 		if (iMEMBER) {
 			if ($message != "") {
-				$result = dbquery("UPDATE ".DB_POSTS." SET post_message='$message', post_smileys='$smileys', post_edituser='".$userdata['user_id']."', post_edittime='".time()."' WHERE post_id='".$_GET['post_id']."'");
+				$post_edit_time = (time() - $pdata['post_datestamp']) < 5*60 ? 0 : time();
+				$result = dbquery(
+					"UPDATE ".DB_POSTS." SET 
+						post_message='".$message."', 
+						post_smileys='".$smileys."', 
+						post_edituser='".$userdata['user_id']."', 
+						post_edittime='".$post_edit_time."' 
+					WHERE post_id='".$_GET['post_id']."'"
+				);
 				if ($pdata['first_post'] == $_GET['post_id'] && $subject != "") {
-					$result = dbquery("UPDATE ".DB_THREADS." SET thread_subject='$subject' WHERE thread_id='".$_GET['thread_id']."'");
+					$result = dbquery("UPDATE ".DB_THREADS." SET thread_subject='".$subject."' WHERE thread_id='".$_GET['thread_id']."'");
 				}
 				if (isset($_POST['delete_attach'])) {
 					$result = dbquery("SELECT attach_name FROM ".DB_FORUM_ATTACHMENTS." WHERE post_id='".$_GET['post_id']."'");
@@ -181,12 +189,12 @@ if (isset($_POST['savechanges'])) {
 				if ($fdata['forum_attach'] && checkgroup($fdata['forum_attach'])) {
 					if (isset($_FILES['attach']) && !empty($_FILES['attach']['name']) && is_uploaded_file($_FILES['attach']['tmp_name'])) {
 						$attach = $_FILES['attach'];
-						$attachname = substr($attach['name'], 0, strrpos($attach['name'], "."));
+						$attachname = stripfilename(substr($attach['name'], 0, strrpos($attach['name'], ".")));
 						$attachext = strtolower(strrchr($attach['name'],"."));
 						if (preg_match("/^[-0-9A-Z_\[\]]+$/i", $attachname) && $attach['size'] <= $settings['attachmax']) {
 							$attachtypes = explode(",", $settings['attachtypes']);
 							if (in_array($attachext, $attachtypes)) {
-								$attachname = attach_exists(strtolower($attach['name']));
+								$attachname .= $attachext;
 								move_uploaded_file($attach['tmp_name'], FORUM."attachments/".$attachname);
 								chmod(FORUM."attachments/".$attachname,0644);
 								if (in_array($attachext, $imagetypes) && (!@getimagesize(FORUM."attachments/".$attachname) || !@verify_image(FORUM."attachments/".$attachname))) {

@@ -33,6 +33,12 @@ if (isset($_POST['savesettings'])) {
 	if (!$result) { $error = 1; }
 	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".addslash(descript($_POST['maintenance_message']))."' WHERE settings_name='maintenance_message'");
 	if (!$result) { $error = 1; }
+	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".(isnum($_POST['bad_words_enabled']) ? $_POST['bad_words_enabled'] : "0")."' WHERE settings_name='bad_words_enabled'");
+	if (!$result) { $error = 1; }
+	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".addslash($_POST['bad_words'])."' WHERE settings_name='bad_words'");
+	if (!$result) { $error = 1; }
+	$result = dbquery("UPDATE ".DB_SETTINGS." SET settings_value='".stripinput($_POST['bad_word_replace'])."' WHERE settings_name='bad_word_replace'");
+	if (!$result) { $error = 1; }
 	
 	redirect(FUSION_SELF.$aidlink."&error=".$error);
 }
@@ -61,6 +67,20 @@ echo "<td width='50%' class='tbl'><select name='flood_autoban' class='textbox'>\
 echo "<option value='1'".($settings['flood_autoban'] == "1" ? " selected='selected'" : "").">".$locale['502']."</option>\n";
 echo "<option value='0'".($settings['flood_autoban'] == "0" ? " selected='selected'" : "").">".$locale['503']."</option>\n";
 echo "</select></td>\n";
+echo "</tr>\n<tr>\n";
+echo "<td class='tbl2' align='center' colspan='2'>".$locale['687']."</td>\n";
+echo "</tr>\n<tr>\n";
+echo "<td width='50%' class='tbl'>".$locale['659']."</td>\n";
+echo "<td width='50%' class='tbl'><select name='bad_words_enabled' class='textbox'>\n";
+echo "<option value='1'".($settings['bad_words_enabled'] == "1" ? " selected='selected'" : "").">".$locale['518']."</option>\n";
+echo "<option value='0'".($settings['bad_words_enabled'] == "0" ? " selected='selected'" : "").">".$locale['519']."</option>\n";
+echo "</select></td>\n";
+echo "</tr>\n<tr>\n";
+echo "<td valign='top' width='50%' class='tbl'>".$locale['651']."<br /><span class='small2'>".$locale['652']."<br />".$locale['653']."</span></td>\n";
+echo "<td width='50%' class='tbl'><textarea name='bad_words' cols='50' rows='5' class='textbox' style='width:200px;'>".$settings['bad_words']."</textarea></td>\n";
+echo "</tr>\n<tr>\n";
+echo "<td width='50%' class='tbl'>".$locale['654']."</td>\n";
+echo "<td width='50%' class='tbl'><input type='text' name='bad_word_replace' value='".$settings['bad_word_replace']."' maxlength='128' class='textbox' style='width:200px;' /></td>\n";
 echo "</tr>\n<tr>\n";
 echo "<td class='tbl2' align='center' colspan='2'>".$locale['681']."</td>\n";
 echo "</tr>\n<tr>\n";

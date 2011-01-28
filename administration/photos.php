@@ -41,6 +41,7 @@ if (function_exists('gd_info')) {
 			elseif ($_GET['error'] == 2) { $message .= sprintf($locale['416'], parsebytesize($settings['photo_max_b']))."</span>"; }
 			elseif ($_GET['error'] == 3) { $message .= $locale['417']."</span>"; }
 			elseif ($_GET['error'] == 4) { $message .= sprintf($locale['418'], $settings['photo_max_w'], $settings['photo_max_h'])."</span>"; }
+			elseif ($_GET['error'] == 5) { $message .= $locale['421']."</span>"; }
 		} elseif ($_GET['status'] == "delt") {
 			$message = $locale['412'];
 		} elseif ($_GET['status'] == "del") {
@@ -229,35 +230,39 @@ if (function_exists('gd_info')) {
 		$photo_comments = isset($_POST['photo_comments']) ? "1" : "0";
 		$photo_ratings = isset($_POST['photo_ratings']) ? "1" : "0";
 		$photo_file = ""; $photo_thumb1 = ""; $photo_thumb2 = "";
-		if (is_uploaded_file($_FILES['photo_pic_file']['tmp_name'])) {
-			$photo_types = array(".gif",".jpg",".jpeg",".png");
-			$photo_pic = $_FILES['photo_pic_file'];
-			$photo_name = str_replace(" ", "_", strtolower(substr($photo_pic['name'], 0, strrpos($photo_pic['name'], "."))));
-			$photo_ext = strtolower(strrchr($photo_pic['name'],"."));
-			$photo_dest = PHOTODIR;
-			if (!preg_match("/^[-0-9A-Z_\.\[\]]+$/i", $photo_name)) {
-				$error = 1;
-			} elseif ($photo_pic['size'] > $settings['photo_max_b']){
-				$error = 2;
-			} elseif (!in_array($photo_ext, $photo_types)) {
-				$error = 3;
-			} else {
-				$photo_file = image_exists($photo_dest, $photo_name.$photo_ext);
-				move_uploaded_file($photo_pic['tmp_name'], $photo_dest.$photo_file);
-				chmod($photo_dest.$photo_file, 0644);
-				$imagefile = @getimagesize($photo_dest.$photo_file);
-				if ($imagefile[0] > $settings['photo_max_w'] || $imagefile[1] > $settings['photo_max_h']) {
-					$error = 4;
-					unlink($photo_dest.$photo_file);
+		if (!empty($_FILES['photo_pic_file']['name'])) {
+			if (is_uploaded_file($_FILES['photo_pic_file']['tmp_name'])) {
+				$photo_types = array(".gif",".jpg",".jpeg",".png");
+				$photo_pic = $_FILES['photo_pic_file'];
+				$photo_name = stripfilename(str_replace(" ", "_", strtolower(substr($photo_pic['name'], 0, strrpos($photo_pic['name'], ".")))));
+				$photo_ext = strtolower(strrchr($photo_pic['name'],"."));
+				$photo_dest = PHOTODIR;
+				if (!preg_match("/^[-0-9A-Z_\.\[\]]+$/i", $photo_name)) {
+					$error = 1;
+				} elseif ($photo_pic['size'] > $settings['photo_max_b']){
+					$error = 2;
+				} elseif (!in_array($photo_ext, $photo_types)) {
+					$error = 3;
 				} else {
-					$photo_thumb1 = image_exists($photo_dest, $photo_name."_t1".$photo_ext);
-					createthumbnail($imagefile[2], $photo_dest.$photo_file, $photo_dest.$photo_thumb1, $settings['thumb_w'], $settings['thumb_h']);
-					if ($imagefile[0] > $settings['photo_w'] || $imagefile[1] > $settings['photo_h']) {
-						$photo_thumb2 = image_exists($photo_dest, $photo_name."_t2".$photo_ext);
-						createthumbnail($imagefile[2], $photo_dest.$photo_file, $photo_dest.$photo_thumb2, $settings['photo_w'], $settings['photo_h']);
+					$photo_file = image_exists($photo_dest, $photo_name.$photo_ext);
+					move_uploaded_file($photo_pic['tmp_name'], $photo_dest.$photo_file);
+					chmod($photo_dest.$photo_file, 0644);
+					$imagefile = @getimagesize($photo_dest.$photo_file);
+					if ($imagefile[0] > $settings['photo_max_w'] || $imagefile[1] > $settings['photo_max_h']) {
+						$error = 4;
+						unlink($photo_dest.$photo_file);
+					} else {
+						$photo_thumb1 = image_exists($photo_dest, $photo_name."_t1".$photo_ext);
+						createthumbnail($imagefile[2], $photo_dest.$photo_file, $photo_dest.$photo_thumb1, $settings['thumb_w'], $settings['thumb_h']);
+						if ($imagefile[0] > $settings['photo_w'] || $imagefile[1] > $settings['photo_h']) {
+							$photo_thumb2 = image_exists($photo_dest, $photo_name."_t2".$photo_ext);
+							createthumbnail($imagefile[2], $photo_dest.$photo_file, $photo_dest.$photo_thumb2, $settings['photo_w'], $settings['photo_h']);
+						}
 					}
 				}
 			}
+		} else {
+			$error = 5;
 		}
 		if (!$error) {
 			if ((isset($_GET['action']) && $_GET['action'] == "edit") && (isset($_GET['photo_id']) && isnum($_GET['photo_id']))) {
@@ -435,13 +440,17 @@ if (function_exists('gd_info')) {
 		echo "<input class='button' type='button' value='".$locale['476']."' onclick=\"location.href='photoalbums.php".$aidlink."';\" />\n";
 		echo "</td>\n</tr>\n</table>\n</form>\n";
 		if (dbrows($result)) {
-			echo "<script type='text/javascript'>\n"."function setChecked(frmName,chkName,val) {\n";
+			echo "<script type='text/javascript'>\n";
+			echo "/* <![CDATA[ */";
+			echo "function setChecked(frmName,chkName,val) {\n";
 			echo "dml=document.forms[frmName];\n"."len=dml.elements.length;"."\n"."for(i=0;i < len;i++) {\n";
 			echo "if(dml.elements[i].name == chkName) {"."\n"."dml.elements[i].checked = val;\n";
 			echo "}\n}\n}\n"."function ConfirmMove(moveType) {\n";
 			echo "if(moveType==0) {"."\n"."return confirm('".$locale['481']."')\n";
 			echo "}else{\n"."return confirm('".$locale['482']."')\n";
-			echo "}\n}\n</script>\n";
+			echo "}\n}\n";
+			echo "/*//]]>\n*/";
+			echo "</script>\n";
 		}
 		if ($rows > $settings['thumbs_per_page']) {
 			echo "<div align='center' style='margin-top:5px;'>\n".makepagenav($_GET['rowstart'], $settings['thumbs_per_page'], $rows, 3, FUSION_SELF.$aidlink."&amp;album_id=".$_GET['album_id']."&amp;")."\n</div>\n";

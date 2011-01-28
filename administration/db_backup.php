@@ -27,7 +27,7 @@ function stripsiteinput($text) {
 	return $text;
 }
 
-if(isset($_POST['btn_create_backup'])){
+if (isset($_POST['btn_create_backup'])) {
 	if (!check_admin_pass(isset($_POST['user_admin_password']) ? stripinput($_POST['user_admin_password']) : "")) {
 		redirect(FUSION_SELF.$aidlink."&status=pw");
 	}
@@ -192,7 +192,7 @@ if (isset($_POST['btn_do_restore'])) {
 	} else {
 		redirect(FUSION_SELF.$aidlink);
 	}
-	$info_tbls = array(); $info_ins_cnt = array(); $info_inserts = array();
+	$info_dbname = ""; $info_date = ""; $info_tblpref = ""; $info_tbls = array(); $info_ins_cnt = array(); $info_inserts = array();
 	foreach ($backup_data as $resultline) {
 		if (preg_match_all("/^# Database Name: `(.*?)`/", $resultline, $resultinfo)) { $info_dbname = $resultinfo[1][0]; }
 		if (preg_match_all("/^# Table Prefix: `(.*?)`/", $resultline, $resultinfo)) { $info_tblpref = $resultinfo[1][0]; }
@@ -293,7 +293,9 @@ if (isset($_POST['btn_do_restore'])) {
 	echo "</tr>\n<tr>\n";
 	echo "<td align='right' class='tbl'>".$locale['455']."</td>\n";
 	echo "<td class='tbl'><select name='backup_type' class='textbox' style='width:150px;'>\n";
-	echo "<option value='.gz' selected='selected'>.sql.gz ".$locale['456']."</option>\n";
+	if (function_exists("gzencode")){
+		echo "<option value='.gz' selected='selected'>.sql.gz ".$locale['456']."</option>\n";
+	}
 	echo "<option value='.sql'>.sql</option>\n";
 	echo "</select></td>\n";
 	echo "</tr>\n<tr>\n";
@@ -319,8 +321,10 @@ if (isset($_POST['btn_do_restore'])) {
 	closetable();
 
 	opentable($locale['480']);
+	$file_types = (function_exists("gzencode")) ? ".gz " : ""; // added
 	echo "<form name='restore' method='post' action='".FUSION_SELF.$aidlink."&amp;action=restore' enctype='multipart/form-data'>\n";
-	echo "<div style='text-align:center'>".$locale['431']." <input type='file' name='upload_backup_file' class='textbox' /><br /><br />\n";
+	echo "<div style='text-align:center'>".$locale['431']." <input type='file' name='upload_backup_file' class='textbox' /><br />\n";// edited
+	echo $locale['440']." ".$file_types.".sql<br /><br />\n"; // added
 	echo "<input class='button' type='submit' name='restore' style='width:100px;' value='".$locale['438']."' />\n";
 	echo "</div>\n</form>\n";
 	closetable();

@@ -5,7 +5,7 @@
 | http://www.php-fusion.co.uk/
 +--------------------------------------------------------+
 | Filename: go.php
-| Author: SoulSmasher
+| Author: Arda {SoulSmasher}
 +--------------------------------------------------------+
 | This program is released as free software under the
 | Affero GPL license. You can redistribute it and/or
@@ -36,8 +36,8 @@ if (isset($_GET['id']) && isnum($_GET['id'])) {
 	}
 }
 
-echo "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>\n";
-echo "<html>\n<head>\n";
+echo "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='".$locale['xml_lang']."' lang='".$locale['xml_lang']."'>\n";
+echo "<head>\n<title>".$settings['sitename']."</title>\n";
 echo "<title>".$settings['sitename']."</title>\n";
 echo "<meta http-equiv='Content-Type' content='text/html; charset=".$locale['charset']."' />\n";
 echo "<meta http-equiv='refresh' content='2; url=".$urlprefix.$url."' />\n";
@@ -54,7 +54,7 @@ echo "<table cellpadding='0' cellspacing='1' width='80%' class='tbl-border cente
 echo "<td class='tbl1'>\n<div style='text-align:center'><!--redirect_pre_logo--><br />\n";
 echo "<img src='".BASEDIR.$settings['sitebanner']."' alt='".$settings['sitename']."' /><br /><br />\n";
 
-echo "<a href='".$urlprefix.$url."' rel='nofollow' target='_blank'>".sprintf($locale['global_500'],$urlprefix.$url)."</a>";
+echo "<a href='".$urlprefix.$url."' rel='nofollow' target='_blank'>".sprintf($locale['global_500'],$urlprefix.$url)."</a></div>";
 
 echo "</td>\n</tr>\n</table>\n";
 

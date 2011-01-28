@@ -18,7 +18,7 @@ $image_files = array();
 $temp = opendir(IMAGES);
 while ($file = readdir($temp)) {
 	if (!in_array($file, array(".", "..", "/", "index.php", "imagelist.js")) && !is_dir(IMAGES.$file)) {
-		$image_files[] = "['Images: ".$file."','".$settings['siteurl']."images/".$file."'], ";
+		$image_files[] = "['".$locale['422'].": ".$file."','".$settings['siteurl']."images/".$file."'], ";
 	}
 }
 closedir($temp);
@@ -27,7 +27,7 @@ closedir($temp);
 $temp = opendir(IMAGES_A);
 while ($file = readdir($temp)) {
 	if (!in_array($file, array(".", "..", "/", "index.php"))) {
-		$image_files[] = "['articles: ".$file."','".$settings['siteurl']."images/articles/".$file."'], ";
+		$image_files[] = "['".$locale['423'].": ".$file."','".$settings['siteurl']."images/articles/".$file."'], ";
 	}
 }
 closedir($temp);
@@ -36,7 +36,16 @@ closedir($temp);
 $temp = opendir(IMAGES_N);
 while ($file = readdir($temp)) {
 	if (!in_array($file, array(".", "..", "/", "index.php")) && !is_dir(IMAGES_N.$file)) {
-		$image_files[] = "['news: ".$file."','".$settings['siteurl']."images/news/".$file."'], ";
+		$image_files[] = "['".$locale['424'].": ".$file."','".$settings['siteurl']."images/news/".$file."'], ";
+	}
+}
+closedir($temp);
+	
+// news cats -------------------
+$temp = opendir(IMAGES_NC);
+while ($file = readdir($temp)) {
+	if (!in_array($file, array(".", "..", "/", "index.php")) && !is_dir(IMAGES_NC.$file)) {
+		$image_files[] = "['".$locale['427'].": ".$file."','".$settings['siteurl']."images/news_cats/".$file."'], ";
 	}
 }
 closedir($temp);

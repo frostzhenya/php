@@ -262,14 +262,22 @@ if (isset($_POST['save_group'])) {
 		echo "</table>\n</form>\n";
 		if ($rows > 20) { echo "<div align='center' style='margin-top:5px;'>\n".makePageNav($_GET['rowstart'],20,$rows,3,FUSION_SELF.$aidlink."&amp;group_id=".$_GET['group_id']."&amp;")."\n</div>\n"; }
 		closetable();
-		echo "<script type='text/javascript'>"."\n"."function setChecked(frmName,chkName,val) {"."\n";
+		echo "<script type='text/javascript'>\n";
+		echo "* <![CDATA[ */";
+		echo "function setChecked(frmName,chkName,val) {"."\n";
 		echo "dml=document.forms[frmName];"."\n"."len=dml.elements.length;"."\n"."for(i=0;i < len;i++) {"."\n";
 		echo "if(dml.elements[i].name == chkName) {"."\n"."dml.elements[i].checked = val;"."\n";
-		echo "}\n}\n}\n</script>\n";
+		echo "}\n}\n}\n";
+		echo "/*//]]>\n*/";
+		echo "</script>\n";
 	}
 }
-echo "<script type='text/javascript'>"."\n"."function DeleteGroup() {\n";
-echo "return confirm('".$locale['423']."');\n}\n</script>\n";
+echo "<script type='text/javascript'>\n";
+echo "/* <![CDATA[ */";
+echo "function DeleteGroup() {\n";
+echo "return confirm('".$locale['423']."');\n}\n";
+echo "/*//]]>\n*/";
+echo "</script>\n";
 
 require_once THEMES."templates/footer.php";
 ?>

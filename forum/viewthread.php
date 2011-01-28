@@ -134,12 +134,15 @@ if (($rows > $posts_per_page) || ($can_post || $can_reply)) {
 	if ($rows > $posts_per_page) { echo "<td style='padding:4px 0px 4px 0px'>".makepagenav($_GET['rowstart'],$posts_per_page,$rows,3,FUSION_SELF."?thread_id=".$_GET['thread_id']."&amp;")."</td>\n"; }
 	if (iMEMBER && $can_post) {
 		echo "<td align='right' style='padding:0px 0px 4px 0px'>\n<!--pre_forum_buttons-->\n";
-		if (!$fdata['thread_locked'] && $can_reply) {
-			echo "<a href='post.php?action=reply&amp;forum_id=".$fdata['forum_id']."&amp;thread_id=".$_GET['thread_id']."'><img src='".get_image("reply")."' alt='".$locale['565']."' style='border:0px' /></a>\n";
-		}
 		if ($can_post) {
-			echo "<a href='post.php?action=newthread&amp;forum_id=".$fdata['forum_id']."'><img src='".get_image("newthread")."' alt='".$locale['566']."' style='border:0px' /></a>\n</td>\n";
+			echo "<a href='post.php?action=newthread&amp;forum_id=".$fdata['forum_id']."'>";
+			echo "<img src='".get_image("newthread")."' alt='".$locale['566']."' style='border:0px' /></a>\n";
 		}
+		if (!$fdata['thread_locked'] && $can_reply) {
+			echo "<a href='post.php?action=reply&amp;forum_id=".$fdata['forum_id']."&amp;thread_id=".$_GET['thread_id']."'>";
+			echo "<img src='".get_image("reply")."' alt='".$locale['565']."' style='border:0px' /></a>\n";
+		}
+		echo "</td>\n";
 	}
 	echo "</tr>\n</table>\n";
 }
@@ -274,7 +277,7 @@ if ($rows != 0) {
 			echo "\n<hr />\n".$locale['508'].profile_link($data['post_edituser'], $data['edit_name'], $data['edit_status']).$locale['509'].showdate("forumdate", $data['post_edittime']);
 		}
 		if ($data['post_showsig'] && isset($data['user_sig']) && $data['user_sig']) {
-			echo "\n<hr />".nl2br(parseubb(parsesmileys($data['user_sig']), "b|i|u||center|small|url|mail|img|color"));
+			echo "\n<hr /><div class='forum_sig'>".nl2br(parseubb(parsesmileys($data['user_sig']), "b|i|u||center|small|url|mail|img|color")) . "</div>";
 		}
 		echo "<!--sub_forum_post--></td>\n</tr>\n";
 		echo "<tr>\n<td class='tbl2 forum_thread_ip' style='width:140px;white-space:nowrap'>";
@@ -362,11 +365,13 @@ echo "</tr>\n</table>\n"; if (iMOD) { echo "</form>\n"; }
 if ($can_post || $can_reply) {
 	echo "<table cellpadding='0' cellspacing='0' width='100%'>\n<tr>\n";
 	echo "<td align='right' style='padding-top:10px'>\n<!--post_forum_buttons-->\n";
-	if (!$fdata['thread_locked'] && $can_reply) {
-		echo "<a href='post.php?action=reply&amp;forum_id=".$fdata['forum_id']."&amp;thread_id=".$_GET['thread_id']."'><img src='".get_image("reply")."' alt='".$locale['565']."' style='border:0px' /></a>\n";
-	}
 	if ($can_post) {
-		echo "<a href='post.php?action=newthread&amp;forum_id=".$fdata['forum_id']."'><img src='".get_image("newthread")."' alt='".$locale['566']."' style='border:0px' /></a>\n";
+		echo "<a href='post.php?action=newthread&amp;forum_id=".$fdata['forum_id']."'>";
+		echo "<img src='".get_image("newthread")."' alt='".$locale['566']."' style='border:0px' /></a>\n";
+	}
+	if (!$fdata['thread_locked'] && $can_reply) {
+		echo "<a href='post.php?action=reply&amp;forum_id=".$fdata['forum_id']."&amp;thread_id=".$_GET['thread_id']."'>";
+		echo "<img src='".get_image("reply")."' alt='".$locale['565']."' style='border:0px' /></a>\n";
 	}
 	echo "</td>\n</tr>\n</table>\n";
 }
@@ -390,11 +395,14 @@ if ($can_reply && !$fdata['thread_locked']) {
 	closetable();
 }
 
-echo "<script type='text/javascript'>function jumpforum(forum_id) {\n";
+echo "<script type='text/javascript'>";
+echo "/* <![CDATA[ */";
+echo "function jumpforum(forum_id) {\n";
 echo "document.location.href='".FORUM."viewforum.php?forum_id='+forum_id;\n";
 echo "}\n"."function setChecked(frmName,chkName,val) {\n";
 echo "dml=document.forms[frmName];\n"."len=dml.elements.length;\n"."for(i=0;i < len;i++) {\n";
 echo "if(dml.elements[i].name == chkName) {\n"."dml.elements[i].checked = val;\n}\n}\n}\n";
+echo "/*//]]>\n*/";
 echo "</script>\n";
 
 require_once THEMES."templates/footer.php";

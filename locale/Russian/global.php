@@ -168,6 +168,10 @@ $locale['global_210'] = "Перейти к содержанию";
 $locale['global_300'] = "Тема сайта не найдена";
 $locale['global_301'] = "Извините, невозможно отобразить страницу. Из-за некоторых обстоятельств, не может быть найдена ни одна тема сайта. Если вы администратор сайта, используйте менеджер FTP для загрузки схемы, которая совместима с <em>PHP-Fusion v7</em> в каталог <em>themes/</em>. После загрузки темы, проверьте в разделе <em>Главные настройки</em>, что выбранна загруженная тема в директории <em>themes/</em>. Имейте в виду, что загруженная тема, должна имееть тоже название (включая регистр символов; важно для Unix-серверов), что и выбранная тема в разделе <em>Главные настройки</em>.<br /><br />Если вы пользователь, пожалуйста, свяжитесь с администратором сайта через e-mail: ".hide_email($settings['siteemail'])." и сообщите о этой проблеме.";
 $locale['global_302'] = "Выбранная тема в разделе Главные настройки, не существует или повреждена!";
+// JavaScript Not Enabled
+$locale['global_303'] = "О, нет! Где <strong>JavaScript</strong>?<br />
+ В Вашем браузере не включен или он не поддерживает JavaScript. Пожалуйста, <strong>включите JavaScript</strong> в Вашем браузере для нормального просмотра этого сайта,<br />
+ или <strong>перейдите</strong> на веб браузер, который поддерживает JavaScript; <a href='http://firefox.com' rel='nofollow' title='Mozilla Firefox'>Firefox</a>, <a href='http://apple.com/safari/' rel='nofollow' title='Safari'>Safari</a>, <a href='http://opera.com' rel='nofollow' title='Opera Web Browser'>Opera</a>, <a href='http://www.google.com/chrome' rel='nofollow' title='Google Chrome'>Chrome</a> или версию <a href='http://www.microsoft.com/windows/internet-explorer/' rel='nofollow' title='Internet Explorer'>Internet Explorer</a> не ниже версии 6.";
 // User Management
 // Member status
 $locale['global_400'] = "приостановлено";

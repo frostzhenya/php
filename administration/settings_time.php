@@ -94,8 +94,8 @@ $offset_array = array(
 
 $offsetsite = ""; $offsetserver = "";
 foreach ($offset_array as $key => $offset) {
-	$sel1 = ($settings2['timeoffset'] == $key ? " selected=selected" : "");
-	$sel2 = ($settings2['serveroffset'] == $key ? " selected=selected" : "");
+	$sel1 = ($settings2['timeoffset'] == $key ? " selected='selected'" : "");
+	$sel2 = ($settings2['serveroffset'] == $key ? " selected='selected'" : "");
 	$offsetsite .= "<option value='".$key."'".$sel1.">".$offset."</option>\n";
 	$offsetserver .= "<option".$sel2.">".$key."</option>\n";
 }

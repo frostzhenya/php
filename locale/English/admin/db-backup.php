@@ -26,6 +26,7 @@ $locale['436'] = "all";
 $locale['437'] = "none";
 $locale['438'] = "Restore";
 $locale['439'] = "Cancel";
+$locale['440'] = "Supported File Types:";
 // Database Backup
 $locale['450'] = "Database Backup";
 $locale['451'] = "Database Information";

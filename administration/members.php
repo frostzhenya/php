@@ -53,7 +53,7 @@ if (isset($_POST['cancel'])) {
 	if ($settings['deactivation_action'] == 1) {
 		echo "<br />\n".$locale['611'];
 		echo "</div>\n<div class='admin-message'><strong>".$locale['617']."</strong>\n".$locale['618']."\n";
-		if (checkrights("S9")) { echo $locale['619']; }
+		if (checkrights("S9")) { echo "<a href='".ADMIN."settings_users.php".$aidlink."'>".$locale['619']."</a>"; }
 	}
 	echo "</div>\n<div class='tbl1' style='text-align:center;'>\n";
 	echo "<form method='post' action='".FUSION_SELF.$aidlink."&amp;step=inactive'>\n";
@@ -324,7 +324,7 @@ if (isset($_POST['cancel'])) {
 			echo "<td valign='top' class='tbl'>".$locale['u010'].":</td>\n";
 			echo "<td class='tbl'><input type='file' name='user_avatar' class='textbox' style='width:200px;' /><br />\n";
 			echo "<span class='small2'>".$locale['u011']."</span><br />\n";
-			echo "<span class='small2'>".sprintf($locale['u012'], parsebytesize(30720), 100, 100)."</span></td>\n";
+			echo "<span class='small2'>".sprintf($locale['u012'], parsebytesize($settings['avatar_filesize']), $settings['avatar_width'], $settings['avatar_height'])."</span></td>\n";
 			echo "</tr>\n";
 		} else {
 			echo "<tr>\n";
@@ -389,22 +389,39 @@ if (isset($_POST['cancel'])) {
 	}
 
 // Delete User
-// This code needs to be improved regarding the forum
 } elseif (isset($_GET['step']) && $_GET['step'] == "delete" && $user_id) {
-	$result = dbquery("SELECT user_id FROM ".DB_USERS." WHERE user_id='$user_id' AND user_level<'103'");
+	$result = dbquery("SELECT user_id, user_avatar FROM ".DB_USERS." WHERE user_id='".$user_id."' AND user_level<'103'");
 	if (dbrows($result)) {
-		$result = dbquery("DELETE FROM ".DB_USERS." WHERE user_id='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_ARTICLES." WHERE article_name='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_COMMENTS." WHERE comment_name='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_MESSAGES." WHERE message_to='$user_id' OR message_from='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_NEWS." WHERE news_name='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_POLL_VOTES." WHERE vote_user='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_RATINGS." WHERE rating_user='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_SHOUTBOX." WHERE shout_name='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_SUSPENDS." WHERE suspended_user='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_THREADS." WHERE thread_author='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_POSTS." WHERE post_author='$user_id'");
-		$result = dbquery("DELETE FROM ".DB_THREAD_NOTIFY." WHERE notify_user='$user_id'");
+		// Delete avatar
+		$data = dbarray($result);
+		if ($data['user_avatar'] != "" && file_exists(IMAGES."avatars/".$data['user_avatar'])) {
+			@unlink(IMAGES."avatars/".$data['user_avatar']);
+		}
+		// Delete photos
+		if (!@ini_get("safe_mode")) { define("SAFEMODE", false); } else { define("SAFEMODE", true); }
+		define("PHOTODIR", PHOTOS.(!SAFEMODE ? "album_".$data['album_id']."/" : ""));
+		$result = dbquery("SELECT photo_filename, photo_thumb1, photo_thumb2 FROM ".DB_PHOTOS." WHERE photo_user='".$user_id."'");
+		if (dbrows($result)) {
+			while ($data = dbarray($result)) {
+				$result = dbquery("DELETE FROM ".DB_PHOTOS." WHERE photo_user='".$user_id."'");
+				@unlink(PHOTODIR.$data['photo_filename']);
+				@unlink(PHOTODIR.$data['photo_thumb1']);
+				@unlink(PHOTODIR.$data['photo_thumb2']);
+			}
+		}
+		// Delete content
+		$result = dbquery("DELETE FROM ".DB_USERS." WHERE user_id='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_ARTICLES." WHERE article_name='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_COMMENTS." WHERE comment_name='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_MESSAGES." WHERE message_to='".$user_id."' OR message_from='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_NEWS." WHERE news_name='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_POLL_VOTES." WHERE vote_user='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_RATINGS." WHERE rating_user='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_SHOUTBOX." WHERE shout_name='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_SUSPENDS." WHERE suspended_user='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_THREADS." WHERE thread_author='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_POSTS." WHERE post_author='".$user_id."'");
+		$result = dbquery("DELETE FROM ".DB_THREAD_NOTIFY." WHERE notify_user='".$user_id."'");
 		redirect(USER_MANAGEMENT_SELF."&status=dok");
 	} else {
 		redirect(USER_MANAGEMENT_SELF."&status=der");

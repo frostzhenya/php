@@ -36,6 +36,8 @@ $locale['448'] = "Save Admin Rights";
 $locale['449'] = "Settings";
 // Popup Error/Warning Messages
 $locale['460'] = "Remove this administrator?";
+$locale['461'] = "Add this administrator?";
+$locale['462'] = "Giving these admin rights to a user is a potential security risk!";
 // Remove Admin confirmation
 $locale['470'] = "Delete Admin";
 $locale['471'] = "In order to remove this Administrator, please enter your admin password:";

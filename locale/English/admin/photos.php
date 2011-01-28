@@ -16,6 +16,7 @@ $locale['417'] = "Image must be a GIF, JPEG or PNG file.";
 $locale['418'] = "Image must be no bigger than %uw x %uh pixels.";
 $locale['419'] = "Photo(s) moved.";
 $locale['420'] = "No GD library detected. Photoalbums will not work without GD library. Contact your hosting provider for further information.";
+$locale['421'] = "Image can not be empty.";
 // Photos form
 $locale['430'] = "Move photo into album";
 $locale['431'] = "Move";

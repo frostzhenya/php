@@ -34,7 +34,9 @@ if (iMEMBER) {
 	echo "<form name='loginform' method='post' action='".FUSION_SELF."'>\n";
 	echo $locale['global_101']."<br />\n<input type='text' name='user_name' class='textbox' style='width:100px' /><br />\n";
 	echo $locale['global_102']."<br />\n<input type='password' name='user_pass' class='textbox' style='width:100px' /><br />\n";
-	echo "<input type='checkbox' name='remember_me' value='y' title='".$locale['global_103']."' style='vertical-align:middle;' />\n";
+	if ($settings['login_method'] == "cookies") {
+		echo "<label><input type='checkbox' name='remember_me' value='y' title='".$locale['global_103']."' style='vertical-align:middle;' /></label>\n";
+	}
 	echo "<input type='submit' name='login' value='".$locale['global_104']."' class='button' /><br />\n";
 	echo "</form>\n<br />\n";
 	if ($settings['enable_registration']) {

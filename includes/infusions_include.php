@@ -30,16 +30,6 @@ function filename_exists($dir, $file) {
 	return $file;
 }
 
-// Strip file name
-function stripfilename($filename) {
-	$filename = strtolower(str_replace(" ", "_", $filename));
-	$filename = preg_replace("/[^a-zA-Z0-9_-]/", "", $filename);
-	$filename = preg_replace("/^\W/", "", $filename);
-	$filename = preg_replace('/([_-])\1+/', '$1', $filename);
-	
-	return $filename;
-}
-
 // Sets the value of a setting in the settings_inf table
 function set_setting($setting_name, $setting_value, $setting_inf) {
 	$set_result = dbquery("SELECT settings_name FROM ".DB_SETTINGS_INF." WHERE settings_name='".$setting_name."' AND settings_inf='".$setting_inf."'");
@@ -77,22 +67,23 @@ function send_pm($to, $from, $subject, $message, $smileys = "y") {
 	require_once INCLUDES."flood_include.php";
 
 	$msg_settings = dbarray(dbquery("SELECT pm_inbox, pm_email_notify FROM ".DB_MESSAGES_OPTIONS." WHERE user_id='0'"));
+	$smileys = preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? "n" : $smileys;
 	$error = 0;
 	
-	if (!flood_control("message_datestamp", DB_MESSAGES, "message_from='$from'")) {
+	if (!flood_control("message_datestamp", DB_MESSAGES, "message_from='".$from."'")) {
 		$result = dbquery(
-			"SELECT u.user_id, u.user_name, u.user_email, mo.pm_email_notify, COUNT(message_id) as message_count FROM ".DB_USERS." u
+			"SELECT u.user_id, u.user_name, u.user_email, u.user_level, mo.pm_email_notify, COUNT(message_id) as message_count FROM ".DB_USERS." u
 			LEFT JOIN ".DB_MESSAGES_OPTIONS." mo USING(user_id)
 			LEFT JOIN ".DB_MESSAGES." ON message_to=u.user_id AND message_folder='0'
 			WHERE u.user_id='$to' GROUP BY u.user_id"
 		);
 		if (dbrows($result)) {
 			$data = dbarray($result);
-			$result = dbquery("SELECT user_id, user_name FROM ".DB_USERS." WHERE user_id='$from'");
+			$result = dbquery("SELECT user_id, user_name FROM ".DB_USERS." WHERE user_id='".$from."'");
 			if (dbrows($result)) {
 				$userdata = dbarray($result);
 				if ($to != $from) {
-					if ($msg_settings['pm_inbox'] == "0" || ($data['message_count'] + 1) <= $msg_settings['pm_inbox']) {
+					if ($msg_settings['pm_inbox'] == "0" || ($data['message_count'] + 1) <= $msg_settings['pm_inbox'] || $userdata['user_level'] > "101") {
 						$result = dbquery("INSERT INTO ".DB_MESSAGES." (message_to, message_from, message_subject, message_message, message_smileys, message_read, message_datestamp, message_folder) VALUES('".$data['user_id']."','".$userdata['user_id']."','".$subject."','".$message."','".$smileys."','0','".time()."','0')");
 						$message_content = str_replace("[SUBJECT]", $subject, $locale['626']);
 						$message_content = str_replace("[USER]", $userdata['user_name'], $message_content);
@@ -210,7 +201,8 @@ function upload_image(
 				// Invalid query string
 				$upload_file['error'] = 4;
 				unlink($target_folder.$target_file);
-			} elseif ($thumb1  || $thumb2) {
+			} elseif ($thumb1 || $thumb2) {
+				require_once INCLUDES."photo_functions_include.php";
 				if ($thumb1) {
 					$image_name_t1 = filename_exists($thumb1_folder, $image_name.$thumb1_suffix.$image_ext);
 					$image_info['thumb1_name'] = $image_name_t1;

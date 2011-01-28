@@ -23,11 +23,21 @@ if (!checkrights("IM") || !defined("iAUTH") || $_GET['aid'] != iAUTH) { redirect
 
 if (isset($_GET['action']) && $_GET['action'] = "update") include INCLUDES."buildlist.php";
 
-if (isset($_GET['ifolder']) && $_GET['ifolder'] == "images") { $afolder = IMAGES; }
-elseif (isset($_GET['ifolder']) && $_GET['ifolder'] == "imagesa") { $afolder = IMAGES_A; }
-elseif (isset($_GET['ifolder']) && $_GET['ifolder'] == "imagesn") { $afolder = IMAGES_N; }
-elseif (isset($_GET['ifolder']) && $_GET['ifolder'] == "imagesnc") { $afolder = IMAGES_NC; }
-else { $_GET['ifolder'] = "images"; $afolder = IMAGES; }
+$folders = array("images" => IMAGES, "imagesa" => IMAGES_A, "imagesn" => IMAGES_N, "imagesnc" => IMAGES_NC);
+if (isset($_GET['ifolder']) && ctype_alnum($_GET['ifolder']) == 1 && isset($folders[$_GET['ifolder']])) {
+	$_GET['ifolder'] = stripinput($_GET['ifolder']);
+	$afolder = $folders[$_GET['ifolder']];
+} else {
+	$_GET['ifolder'] = "images"; $afolder = IMAGES;
+}
+
+// List images
+$image_list = makefilelist($afolder, ".|..", true, "files", "php|js|ico|DS_Store|SVN");
+if ($image_list) {
+	$image_count = count($image_list);
+} else {
+	$image_count = 0;
+}
 
 if (isset($_GET['status'])) {
 	if ($_GET['status'] == "del") {
@@ -45,11 +55,11 @@ if (isset($_GET['status'])) {
 	closetable();
 }
 
-if (isset($_GET['del'])) {
+if (isset($_GET['del']) && in_array($_GET['del'], $image_list)) {
 	unlink($afolder.stripinput($_GET['del']));
 	if ($settings['tinymce_enabled'] == 1) { include INCLUDES."buildlist.php"; }
 	redirect(FUSION_SELF.$aidlink."&status=del&ifolder=".$_GET['ifolder']);
-} else if (isset($_POST['uploadimage'])) {
+} elseif (isset($_POST['uploadimage'])) {
 	$error = "";
 	$image_types = array(
 		".gif",
@@ -61,17 +71,17 @@ if (isset($_GET['del'])) {
 		".png",
 		".PNG"
 	);
-	$imgext = strrchr($_FILES['myfile']['name'], ".");
-	$imgname = $_FILES['myfile']['name'];
+	$imgext = strrchr(strtolower($_FILES['myfile']['name']), ".");
+	$imgname = stripfilename(strtolower(substr($_FILES['myfile']['name'], 0, strrpos($_FILES['myfile']['name'], "."))));
 	$imgsize = $_FILES['myfile']['size'];
 	$imgtemp = $_FILES['myfile']['tmp_name'];
 	if (!in_array($imgext, $image_types)) {
 		redirect(FUSION_SELF.$aidlink."&status=upn&ifolder=".$_GET['ifolder']);
 	} elseif (is_uploaded_file($imgtemp)){
-		move_uploaded_file($imgtemp, $afolder.$imgname);
-		chmod($afolder.$imgname,0644);
-		if ($settings['tinymce_enabled'] == 1) include INCLUDES."buildlist.php";
-		redirect(FUSION_SELF.$aidlink."&status=upy&ifolder=".$_GET['ifolder']."&img=$imgname");
+		move_uploaded_file($imgtemp, $afolder.$imgname.$imgext);
+		@chmod($afolder.$imgname.$imgext, 0644);
+		if ($settings['tinymce_enabled'] == 1) { include INCLUDES."buildlist.php"; }
+		redirect(FUSION_SELF.$aidlink."&status=upy&ifolder=".$_GET['ifolder']."&img=".$imgname.$imgext);
 	}
 } else {
 	opentable($locale['420']);
@@ -85,7 +95,7 @@ if (isset($_GET['del'])) {
 	echo "</tr>\n</table>\n</form>\n";
 	closetable();
 
-	if (isset($_GET['view'])) {
+	if (isset($_GET['view']) && in_array($_GET['view'], $image_list)) {
 		opentable($locale['440']);
 		echo "<div style='text-align:center'><br />\n";
 		$image_ext = strrchr($afolder.stripinput($_GET['view']),".");
@@ -94,11 +104,10 @@ if (isset($_GET['del'])) {
 		} else {
 			echo $locale['441']."<br /><br />\n";
 		}
-		echo "<a href='".FUSION_SELF.$aidlink."&amp;ifolder=".$_GET['ifolder']."&amp;del=".stripinput($_GET['view'])."'>".$locale['442']."</a><br /><br />\n<a href='".FUSION_SELF.$aidlink."'>".$locale['402']."</a><br /><br />\n</div>\n";
+		echo "<a href='".FUSION_SELF.$aidlink."&amp;ifolder=".$_GET['ifolder']."&amp;del=".stripinput($_GET['view'])." onclick=\"return confirm('".$locale['470']."');\"'>".$locale['442']."</a>";
+		echo "<br /><br />\n<a href='".FUSION_SELF.$aidlink."'>".$locale['402']."</a><br /><br />\n</div>\n";
 		closetable();
 	} else {
-		$image_list = makefilelist($afolder, ".|..|imagelist.js|index.php", true);
-		if ($image_list) { $image_count = count($image_list); }
 		opentable($locale['460']);
 		echo "<table cellpadding='0' cellspacing='1' width='450' class='tbl-border center'>\n<tr>\n";
 		echo "<td align='center' colspan='2' class='tbl2'>\n";
@@ -108,10 +117,11 @@ if (isset($_GET['del'])) {
 		echo "<span style='font-weight:".($_GET['ifolder'] == "imagesnc" ? "bold" : "normal")."'><a href='".FUSION_SELF.$aidlink."&amp;ifolder=imagesnc'>".$locale['427']."</a></span>\n";
 		echo "</td>\n</tr>\n";
 		if ($image_list) {
-			for ($i=0;$i < $image_count;$i++) {
+			for ($i=0; $i < $image_count; $i++) {
 				if ($i % 2 == 0) { $row_color = "tbl1"; } else { $row_color = "tbl2"; }
-				echo "<tr>\n<td class='$row_color'>$image_list[$i]</td>\n";
-				echo "<td align='right' width='1%' class='$row_color' style='white-space:nowrap'><a href='".FUSION_SELF.$aidlink."&amp;ifolder=".$_GET['ifolder']."&amp;view=".$image_list[$i]."'>".$locale['461']."</a> -\n";
+				echo "<tr>\n<td class='".$row_color."'>".$image_list[$i]."</td>\n";
+				echo "<td align='right' width='1%' class='".$row_color."' style='white-space:nowrap'>\n";
+				echo "<a href='".FUSION_SELF.$aidlink."&amp;ifolder=".$_GET['ifolder']."&amp;view=".$image_list[$i]."'>".$locale['461']."</a> -\n";
 				echo "<a href='".FUSION_SELF.$aidlink."&amp;ifolder=".$_GET['ifolder']."&amp;del=".$image_list[$i]."' onclick=\"return confirm('".$locale['470']."');\">".$locale['462']."</a></td>\n";
 				echo "</tr>\n";
 			}

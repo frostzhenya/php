@@ -120,7 +120,7 @@ if (isset($_POST['send_message'])) {
 	$subject = stripinput(trim($_POST['subject']));
 	$message = stripinput(trim($_POST['message']));
 	if ($subject == "" || $message == "") { redirect(FUSION_SELF."?folder=inbox"); }
-	$smileys = isset($_POST['chk_disablesmileys']) ? "n" : "y";
+	$smileys = isset($_POST['chk_disablesmileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message) ? "n" : "y";
 	require_once INCLUDES."sendmail_include.php";
 	if (iADMIN && isset($_POST['chk_sendtoall']) && isnum($_POST['msg_to_group'])) {
 		$msg_to_group = $_POST['msg_to_group'];
@@ -310,10 +310,14 @@ if (!isset($_GET['msg_send']) && !isset($_GET['msg_read']) && $_GET['folder'] !=
 	} else {
 		echo "<div style='text-align:center'><br />".$locale['461']."<br /><br /></div>";
 	}
-	echo "<script type='text/javascript'>"."\n"."function setChecked(frmName,chkName,val) {"."\n";
+	echo "<script type='text/javascript'>\n";
+	echo "/* <![CDATA[ */";
+	echo "function setChecked(frmName,chkName,val) {"."\n";
 	echo "dml=document.forms[frmName];"."\n"."len=dml.elements.length;"."\n"."for(i=0;i < len;i++) {"."\n";
 	echo "if(dml.elements[i].name == chkName) {"."\n"."dml.elements[i].checked = val;"."\n";
-	echo "}\n}\n}\n</script>\n";
+	echo "}\n}\n}\n";
+	echo "/* ]]>\n */";
+	echo "</script>\n";
 	closetable();
 	if ($total_rows > 20) echo "<div align='center' style='margin-top:5px;'>\n".makepagenav($_GET['rowstart'], 20, $total_rows, 3, FUSION_SELF."?folder=".$_GET['folder']."&amp;")."\n</div>\n";
 } elseif ($_GET['folder'] == "options") {
@@ -417,7 +421,7 @@ if (!isset($_GET['msg_send']) && !isset($_GET['msg_read']) && $_GET['folder'] !=
 			$msg_to_group_state = " disabled";
 			$msg_send_state = "";
 		}
-		$disablesmileys_chk = isset($_POST['chk_disablesmileys']) ? " checked='checked'" : "";
+		$disablesmileys_chk = isset($_POST['chk_disablesmileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $message_preview) ? " checked='checked'" : "";
 		if (!$disablesmileys_chk) $message_preview = parsesmileys($message_preview);
 		opentable($locale['438']);
 		echo "<table cellpadding='0' cellspacing='1' width='100%' class='tbl-border'>\n<tr>\n";
@@ -502,10 +506,14 @@ if (!isset($_GET['msg_send']) && !isset($_GET['msg_read']) && $_GET['folder'] !=
 	echo "<input type='submit' name='send_message' value='".$locale['430']."' class='button' />\n</td>\n</tr>\n";
 	echo "</table>\n</form>\n";
 	closetable();
-	echo "<script type='text/javascript'>function ValidateForm(frm){\n";
+	echo "<script type='text/javascript'>";
+	echo "/* <![CDATA[ */";
+	echo "function ValidateForm(frm){\n";
 	echo "if (frm.subject.value == \"\" || frm.message.value == \"\"){\n";
 	echo "alert(\"".$locale['486']."\");return false;}\n";
-	echo "}\n</script>\n";
+	echo "}\n";
+	echo "/*//]]>\n*/";
+	echo "</script>\n";
 
 } else {
 	redirect(FUSION_SELF);

@@ -61,7 +61,7 @@ if (isset($_POST['delete_posts']) && isset($_POST['delete_post']) && is_array($_
 	} else {
 		$forum_lastpost = "forum_lastpost='0', forum_lastuser='0'";
 	}
-	$result = dbquery("UPDATE ".DB_FORUMS." SET ".$forum_lastpost.(!$thread_count ? "forum_threadcount=forum_threadcount-1," : ",")." forum_postcount=forum_postcount-".$post_count." WHERE forum_id = '".$fdata['forum_id']."'");
+	$result = dbquery("UPDATE ".DB_FORUMS." SET ".$forum_lastpost.(!$thread_count ? ", forum_threadcount=forum_threadcount-1," : ",")." forum_postcount=forum_postcount-".$post_count." WHERE forum_id = '".$fdata['forum_id']."'");
 	if (!$thread_count) { redirect("viewforum.php?forum_id=".$fdata['forum_id']); }
 } elseif (isset($_POST['move_posts']) && isset($_POST['delete_post']) && is_array($_POST['delete_post']) && count($_POST['delete_post'])) {
 	$move_posts = ""; $array_post = array(); $f_post = false; $dell_f_post = false; $f_post_blo = false;

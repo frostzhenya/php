@@ -204,6 +204,7 @@ function showcounter() {
 }
 
 function panelbutton($state, $bname) {
+	$bname = preg_replace("/[^a-zA-Z0-9\s]/", "_", $bname);
 	if (isset($_COOKIE["fusion_box_".$bname])) {
 		if ($_COOKIE["fusion_box_".$bname] == "none") {
 			$state = "off";
@@ -215,6 +216,7 @@ function panelbutton($state, $bname) {
 }
 
 function panelstate($state, $bname) {
+	$bname = preg_replace("/[^a-zA-Z0-9\s]/", "_", $bname);
 	if (isset($_COOKIE["fusion_box_".$bname])) {
 		if ($_COOKIE["fusion_box_".$bname] == "none") {
 			$state = "off";

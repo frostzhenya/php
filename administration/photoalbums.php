@@ -152,8 +152,9 @@ if (function_exists('gd_info')) {
 		if (is_uploaded_file($_FILES['album_pic_file']['tmp_name'])) {
 			$album_types = array(".gif",".jpg",".jpeg",".png");
 			$album_pic = $_FILES['album_pic_file'];
+			$album_name = stripfilename($album_pic['name']);
 			$album_ext = strtolower(strrchr($album_pic['name'],"."));
-			if (!preg_match("/^[-0-9A-Z_\.\[\]\s]+$/i", $album_pic['name'])) {
+			if (!preg_match("/^[-0-9A-Z_\.\[\]\s]+$/i", $album_name)) {
 				$error = 1;
 			} elseif ($album_pic['size'] > $settings['photo_max_b']){
 				$error = 2;
@@ -168,7 +169,7 @@ if (function_exists('gd_info')) {
 					$error = 4;
 					@unlink(PHOTOS."temp".$album_ext);
 				} else {
-					$album_thumb = image_exists(PHOTOS, $album_pic['name']);
+					$album_thumb = image_exists(PHOTOS, $album_name);
 					createthumbnail($imagefile[2], PHOTOS."temp".$album_ext, PHOTOS.$album_thumb, $settings['thumb_w'], $settings['thumb_h']);
 					@unlink(PHOTOS."temp".$album_ext);
 				}

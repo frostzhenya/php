@@ -130,7 +130,7 @@ $locale['615'] = "permanently deleted";
 $locale['616'] = "anonymize";
 $locale['617'] = "Warning:";
 $locale['618'] = "It is strongly recommended to change deactivation action to anonymize instead of delete to prevent data loss!";
-$locale['619'] = "You can do so <a href='".ADMIN."settings_users.php".$aidlink."'>here</a>.";
+$locale['619'] = "You can do so here.";
 $locale['620'] = "anonymize";
 $locale['621'] = "Automatic deactivation of inactive users.";
 ?>

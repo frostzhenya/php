@@ -21,9 +21,9 @@ include LOCALE.LOCALESET."photogallery.php";
 
 define("SAFEMODE", @ini_get("safe_mode") ? true : false);
 
-echo "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>\n";
-echo "<html>\n<head>\n";
-echo "<title>".$settings['sitename']."</title>\n";
+echo "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>\n";
+echo "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='".$locale['xml_lang']."' lang='".$locale['xml_lang']."'>\n";
+echo "<head>\n<title>".$settings['sitename']."</title>\n";
 echo "<meta http-equiv='Content-Type' content='text/html; charset=".$locale['charset']."' />\n";
 echo "<meta name='description' content='".$settings['description']."' />\n";
 echo "<meta name='keywords' content='".$settings['keywords']."' />\n";

@@ -37,11 +37,11 @@ if (iMEMBER && (isset($_GET['action']) && $_GET['action'] == "delete") && (isset
 
 function sbawrap($text) {
 	global $locale;
-	
+
 	$i = 0; $tags = 0; $chars = 0; $res = "";
-	
+
 	$str_len = strlen($text);
-	
+
 	for ($i = 0; $i < $str_len; $i++) {
 		$chr = mb_substr($text, $i, 1, $locale['charset']);
 		if ($chr == "<") {
@@ -65,14 +65,14 @@ function sbawrap($text) {
 		} elseif (!$tags) {
 			$chars++;
 		}
-		
+
 		if (!$tags && $chars == 40) {
 			$chr .= " ";
 			$chars = 0;
 		}
 		$res .= $chr;
 	}
-	
+
 	return $res;
 }
 
@@ -87,7 +87,7 @@ if (iMEMBER || $settings['guestposts'] == "1") {
 			$archive_shout_name = $userdata['user_id'];
 		} elseif ($settings['guestposts'] == "1") {
 			$archive_shout_name = trim(stripinput($_POST['archive_shout_name']));
-			$archive_shout_name = preg_replace("(^[0-9]*)", "", $archive_shout_name);
+			$archive_shout_name = preg_replace("(^[0-9\s]*)", "", $archive_shout_name);
 			if (isnum($archive_shout_name)) { $archive_shout_name = ""; }
 			include_once INCLUDES."securimage/securimage.php";
 			$securimage = new Securimage();
@@ -164,7 +164,7 @@ if (!isset($_GET['rowstart']) || !isnum($_GET['rowstart'])) { $_GET['rowstart'] 
 if ($rows != 0) {
 	$result = dbquery(
 		"SELECT s.shout_id, s.shout_name, s.shout_message, s.shout_datestamp, u.user_id, u.user_name, u.user_status
-		FROM ".DB_SHOUTBOX." s 
+		FROM ".DB_SHOUTBOX." s
 		LEFT JOIN ".DB_USERS." u ON s.shout_name=u.user_id
 		WHERE s.shout_hidden='0'
 		ORDER BY s.shout_datestamp DESC LIMIT ".$_GET['rowstart'].",20"

@@ -301,12 +301,14 @@ function cleanurl($url) {
 // Strip Input Function, prevents HTML in unwanted places
 function stripinput($text) {
 	if (!is_array($text)) {
-		if (QUOTES_GPC) $text = stripslashes($text);
+		$text = trim($text);
+		if (QUOTES_GPC) { $text = stripslashes($text); }
+		//$text = preg_replace("/&[^#0-9]/", "&amp;", $text)
 		$search = array("&", "\"", "'", "\\", '\"', "\'", "<", ">", "&nbsp;");
 		$replace = array("&amp;", "&quot;", "&#39;", "&#92;", "&quot;", "&#39;", "&lt;", "&gt;", " ");
-		$text = str_replace($search, $replace, $text);
+		$text = preg_replace("/(&amp;)+(?=\#([0-9]{2,3});)/i", "&", str_replace($search, $replace, $text));
 	} else {
-		while (list($key, $value) = each($text)) {
+		foreach ($exts as $key => $value) {
 			$text[$key] = stripinput($value);
 		}
 	}
@@ -332,6 +334,17 @@ function stripget($check_url) {
 		}
 	}
 	return $return;
+}
+
+// Strip file name
+function stripfilename($filename) {
+	$filename = strtolower(str_replace(" ", "_", $filename));
+	$filename = preg_replace("/[^a-zA-Z0-9_-]/", "", $filename);
+	$filename = preg_replace("/^\W/", "", $filename);
+	$filename = preg_replace('/([_-])\1+/', '$1', $filename);
+	if ($filename == "") { $filename = time(); }
+
+	return $filename;
 }
 
 // Strip Slash Function, only stripslashes if magic_quotes_gpc is on
@@ -537,7 +550,7 @@ function highlight_words($word, $subject) {
 	for($i = 0, $l = count($word); $i < $l; $i++) {
 		$word[$i] = str_replace(array("\\", "+", "*", "?", "[", "^", "]", "$", "(", ")", "{", "}", "=", "!", "<", ">", "|", ":", "#", "-", "_"), "", $word[$i]);
 		if (!empty($word[$i])) {
-			$subject = preg_replace("/($word[$i])(?![^<]*>)/i", "<span style='background-color:yellow;color:#333;font-weight:bold;padding-left:2px;padding-right:2px'>\${1}</span>", $subject);
+			$subject = preg_replace("#($word[$i])(?![^<]*>)#i", "<span style='background-color:yellow;color:#333;font-weight:bold;padding-left:2px;padding-right:2px'>\${1}</span>", $subject);
 		}
 	}
 	return $subject;

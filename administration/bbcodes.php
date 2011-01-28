@@ -203,7 +203,7 @@ if ($_GET['page'] == 1) {
 } else if ($_GET['page'] == 2) {
 	if (isset($_POST['post_test'])) {
 		$test_message = stripinput($_POST['test_message']);
-		$smileys_checked = isset($_POST['test_smileys']) ? "checked='checked'" : "";
+		$smileys_checked = isset($_POST['test_smileys']) || preg_match("#(\[code\](.*?)\[/code\]|\[geshi=(.*?)\](.*?)\[/geshi\]|\[php\](.*?)\[/php\])#si", $test_message) ? " checked='checked'" : "";
 		opentable($locale['417']);
 		if (!$smileys_checked) {
 			echo parseubb(parsesmileys($test_message));

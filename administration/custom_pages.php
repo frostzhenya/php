@@ -29,15 +29,24 @@ if (!checkrights("CP") || !defined("iAUTH") || $_GET['aid'] != iAUTH) { redirect
 
 if (isset($_GET['status']) && !isset($message)) {
 	if ($_GET['status'] == "sn") {
-		$message = $locale['410']."<br />\n".$locale['412']."\n<a href='".BASEDIR."viewpage.php?page_id=".intval($_GET['pid'])."'>viewpage.php?page_id=".intval($_GET['pid'])."</a>\n";
+		$message = $locale['410']."<br />\n".$locale['412']."\n";
+		$message .= "<a href='".BASEDIR."viewpage.php?page_id=".intval($_GET['pid'])."'>viewpage.php?page_id=".intval($_GET['pid'])."</a>\n";
 	} elseif ($_GET['status'] == "su") {
-		$message = $locale['411']."<br />\n".$locale['412']."\n<a href='".BASEDIR."viewpage.php?page_id=".intval($_GET['pid'])."'>viewpage.php?page_id=".intval($_GET['pid'])."</a>\n";
+		$message = $locale['411']."<br />\n".$locale['412']."\n";
+		$message .= "<a href='".BASEDIR."viewpage.php?page_id=".intval($_GET['pid'])."'>viewpage.php?page_id=".intval($_GET['pid'])."</a>\n";
 	} elseif ($_GET['status'] == "del") {
 		$message = $locale['413'];
 	} elseif ($_GET['status'] == "pw") {
 		$message = $locale['global_182'];
 	}
-	if ($message) { echo "<div id='close-message'><div class='admin-message'>".$message."</div></div>\n"; }
+	if ($message) {
+		$message = "<div class='admin-message'>".$message."</div>";
+		if ($_GET['status'] == "sn" || $_GET['status'] == "su") {
+			echo $message;
+		} else {
+			echo "<div id='close-message'>".$message."</div>\n";
+		}
+	}
 }
 
 if (isset($_POST['save'])) {
@@ -48,14 +57,34 @@ if (isset($_POST['save'])) {
 	$ratings = isset($_POST['page_ratings']) ? "1" : "0";
 	if (check_admin_pass(isset($_POST['admin_password']) ? stripinput($_POST['admin_password']) : "")) {
 		if (isset($_POST['page_id']) && isnum($_POST['page_id'])) {
-			$result = dbquery("UPDATE ".DB_CUSTOM_PAGES." SET page_title='$page_title', page_access='$page_access', page_content='$page_content', page_allow_comments='$comments', page_allow_ratings='$ratings' WHERE page_id='".$_POST['page_id']."'");
+			$result = dbquery(
+				"UPDATE ".DB_CUSTOM_PAGES." SET
+					page_title='".$page_title."',
+					page_access='".$page_access."',
+					page_content='".$page_content."',
+					page_allow_comments='".$comments."',
+					page_allow_ratings='".$ratings."'
+				WHERE page_id='".$_POST['page_id']."'"
+			);
 		} else {
-			$result = dbquery("INSERT INTO ".DB_CUSTOM_PAGES." (page_title, page_access, page_content, page_allow_comments, page_allow_ratings) VALUES ('$page_title', '$page_access', '$page_content', '$comments', '$ratings')");
+			$result = dbquery(
+				"INSERT INTO ".DB_CUSTOM_PAGES." (
+					page_title, page_access, page_content, page_allow_comments, page_allow_ratings
+				) VALUES (
+					'".$page_title."', '".$page_access."', '".$page_content."', '".$comments."', '".$ratings."'
+				)"
+			);
 			$page_id = mysql_insert_id();
 			if (isset($_POST['add_link'])) {
 				$data = dbarray(dbquery("SELECT link_order FROM ".DB_SITE_LINKS." ORDER BY link_order DESC LIMIT 1"));
 				$link_order = $data['link_order'] + 1;
-				$result = dbquery("INSERT INTO ".DB_SITE_LINKS." (link_name, link_url, link_visibility, link_position, link_window, link_order) VALUES ('$page_title', 'viewpage.php?page_id=$page_id', '$page_access', '1', '0', '$link_order')");
+				$result = dbquery(
+					"INSERT INTO ".DB_SITE_LINKS." (
+						link_name, link_url, link_visibility, link_position, link_window, link_order
+					) VALUES (
+						'".$page_title."', 'viewpage.php?page_id=".$page_id."', '".$page_access."', '1', '0', '".$link_order."'
+					)"
+				);
 			}
 		}
 		set_admin_pass(isset($_POST['admin_password']) ? stripinput($_POST['admin_password']) : "");
@@ -106,7 +135,10 @@ if (isset($_POST['save'])) {
 	}
 
 	if (isset($_POST['edit']) && (isset($_POST['page_id']) && isnum($_POST['page_id']))) {
-		$result = dbquery("SELECT page_id, page_title, page_access, page_content, page_allow_comments, page_allow_ratings FROM ".DB_CUSTOM_PAGES." WHERE page_id='".$_POST['page_id']."'");
+		$result = dbquery(
+			"SELECT page_id, page_title, page_access, page_content, page_allow_comments, page_allow_ratings
+			FROM ".DB_CUSTOM_PAGES." WHERE page_id='".$_POST['page_id']."' LIMIT 1"
+		);
 		if (dbrows($result)) {
 			$data = dbarray($result);
 			$page_title = $data['page_title'];
@@ -153,9 +185,9 @@ if (isset($_POST['save'])) {
 	echo "</tr>\n<tr>\n";
 	if (!isset($_COOKIE['custom_pages_tinymce']) || !$_COOKIE['custom_pages_tinymce'] || !$settings['tinymce_enabled']) {
 	echo "<td class='tbl'></td><td class='tbl'>\n";
-	echo "<input type='button' value='&lt;?php?&gt;' class='button' style='width:60px;' onclick=\"addText('page_content', '&lt;?php\\n', '\\n?&gt;');\" />\n";
-	echo "<input type='button' value='&lt;p&gt;' class='button' style='width:35px;' onclick=\"addText('page_content', '&lt;p&gt;', '&lt;/p&gt;');\" />\n";
-	echo "<input type='button' value='&lt;br /&gt;' class='button' style='width:40px;' onclick=\"insertText('page_content', '&lt;br /&gt;');\" />\n";
+	echo "<input type='button' value='&lt;?php?&gt;' class='button' onclick=\"addText('page_content', '&lt;?php\\n', '\\n?&gt;');\" />\n";
+	echo "<input type='button' value='&lt;p&gt;' class='button' onclick=\"addText('page_content', '&lt;p&gt;', '&lt;/p&gt;');\" />\n";
+	echo "<input type='button' value='&lt;br /&gt;' class='button' onclick=\"insertText('page_content', '&lt;br /&gt;');\" />\n";
 	echo display_html("inputform", "page_content", true)."</td>\n";
 	echo "</tr>\n<tr>\n";
 	}
