@@ -188,6 +188,9 @@ function dbconnect($db_host, $db_user, $db_pass, $db_name) {
 
 	$db_connect = @mysql_connect($db_host, $db_user, $db_pass);
 	$db_select = @mysql_select_db($db_name);
+	@mysql_query ("set character_set_client='cp1251'");
+	@mysql_query ("set character_set_results='cp1251'");
+	@mysql_query ("set collation_connection='cp1251_general_ci'");
 	if (!$db_connect) {
 		die("<div style='font-family:Verdana;font-size:11px;text-align:center;'><strong>Unable to establish connection to MySQL</strong><br />".mysql_errno()." : ".mysql_error()."</div>");
 	} elseif (!$db_select) {
